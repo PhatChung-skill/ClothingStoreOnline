@@ -1,0 +1,17 @@
+# Bỏ qua các thư mục build của .NET
+bin/
+obj/
+
+# Bỏ qua thư mục ẩn của Visual Studio/VS Code
+.vs/
+.vscode/
+
+# Bỏ qua các file cấu hình chứa thông tin nhạy cảm ở máy cá nhân
+appsettings.Development.json
+appsettings.Local.json
+*.env
+*.user
+
+# Bỏ qua các file tạm của hệ điều hành
+.DS_Store
+Thumbs.db
