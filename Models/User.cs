@@ -32,6 +32,9 @@ namespace ClothingStoreWeb.Models
         [StringLength(20)]
         public string Role { get; set; } = "Customer"; // Mặc định là Khách hàng
 
+        // Trạng thái khóa tài khoản: false là bình thường, true là bị khóa
+        public bool IsLocked { get; set; } = false;
+
         // Quan hệ 1 - Nhiều: Một người dùng có thể có nhiều Đơn hàng
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }

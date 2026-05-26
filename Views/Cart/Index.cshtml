@@ -1,0 +1,91 @@
+@model IEnumerable<ClothingStoreWeb.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+}
+
+<div class="container mt-5">
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+
+    <h2 class="mb-4 fw-bold"><i class="bi bi-cart4"></i> GIỎ HÀNG</h2>
+    <hr />
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-hover border align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Chi tiết</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng cộng</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@item.ImageUrl" style="width: 70px; height: 90px; object-fit: cover;" class="rounded border">
+                                </td>
+                                <td>
+                                    <h6 class="fw-bold mb-1">@item.ProductName</h6>
+                                    <small class="text-muted">Màu: @item.Color | Size: @item.Size</small>
+                                </td>
+                                <td>@item.Price.ToString("N0") đ</td>
+                                <td class="fw-bold text-center" style="width: 80px;">@item.Quantity</td>
+                                <td class="text-danger fw-bold">@item.TotalPrice.ToString("N0") đ</td>
+                                <td class="text-center">
+                                    <a asp-action="Remove" asp-route-variantId="@item.VariantID" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa sản phẩm này khỏi giỏ?')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body bg-light p-4 rounded">
+                        <h5 class="fw-bold mb-3">TỔNG HÓA ĐƠN</h5>
+                        <div class="d-flex justify-content-between mb-3 fs-5">
+                            <span>Tạm tính:</span>
+                            <span class="text-danger fw-bold">@ViewBag.TotalAmount.ToString("N0") VNĐ</span>
+                        </div>
+                        <p class="text-muted small">* Chưa bao gồm phí vận chuyển thực tế.</p>
+                        <a asp-action="Checkout" class="btn btn-dark btn-lg w-100 py-3 fw-bold">TIẾN HÀNH THANH TOÁN</a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+            <h4 class="text-muted mt-3">Giỏ hàng của bạn đang trống rỗng.</h4>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3 px-5">Quay lại Cửa hàng mua đồ ngay</a>
+        </div>
+    }
+</div>

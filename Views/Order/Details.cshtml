@@ -1,0 +1,70 @@
+@model ClothingStoreWeb.Models.Order
+@{
+    ViewData["Title"] = "Chi tiết Đơn hàng";
+}
+
+<div class="mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h4>CHI TIẾT ĐƠN HÀNG #@Model.OrderID</h4>
+            <p class="text-muted">Ngày đặt: @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+            
+            <table class="table table-bordered mt-3">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Biến thể</th>
+                        <th>Giá</th>
+                        <th>SL</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.OrderDetails)
+                    {
+                        <tr>
+                            <td>@detail.ProductVariant?.Product?.Name</td>
+                            <td>@detail.ProductVariant?.Color / @detail.ProductVariant?.Size</td>
+                            <td>@detail.UnitPrice.ToString("N0") đ</td>
+                            <td>@detail.Quantity</td>
+                            <td class="fw-bold">@((detail.UnitPrice * detail.Quantity).ToString("N0")) đ</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end fw-bold">TỔNG CỘNG:</td>
+                        <td class="text-danger fw-bold fs-5">@Model.TotalAmount.ToString("N0") đ</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white fw-bold">THÔNG TIN GIAO HÀNG</div>
+                <div class="card-body">
+                    <p><strong>Người nhận:</strong> @(string.IsNullOrEmpty(Model.User?.FullName) ? Model.User?.Username : Model.User?.FullName)</p>
+                    <p><strong>SĐT liên hệ:</strong> @(string.IsNullOrEmpty(Model.User?.Phone) ? "Chưa cập nhật" : Model.User.Phone)</p>
+                    <p><strong>Địa chỉ:</strong> @Model.ShippingAddress</p>
+                    <p><strong>Thanh toán:</strong> <span class="badge bg-dark">@Model.PaymentMethod</span></p>
+                    
+                    <hr />
+                    
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="orderId" value="@Model.OrderID" />
+                        <label class="fw-bold mb-2">Trạng thái đơn hàng:</label>
+                        <select name="status" class="form-select mb-3">
+                            <option value="Pending" selected="@(Model.Status == "Pending")">Chờ duyệt</option>
+                            <option value="Shipping" selected="@(Model.Status == "Shipping")">Đang giao</option>
+                            <option value="Completed" selected="@(Model.Status == "Completed")">Hoàn thành</option>
+                            <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Hủy đơn</option>
+                        </select>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">CẬP NHẬT TRẠNG THÁI</button>
+                    </form>
+                </div>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-3">Quay lại danh sách</a>
+        </div>
+    </div>
+</div>

@@ -56,13 +56,24 @@
 
             <hr />
 
-            <form action="#">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show my-3" role="alert">
+                    <strong class="d-block"><i class="bi bi-x-circle-fill"></i> Thông báo từ kho hàng:</strong>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form asp-controller="Cart" asp-action="Add" method="post">
+                <input type="hidden" name="productId" value="@Model.Product.ProductID" />
+                
                 <div class="mb-3">
                     <label class="fw-bold">Chọn Màu sắc:</label>
                     <div class="d-flex gap-2 mt-2">
                         @foreach (var color in Model.AvailableColors)
                         {
-                            <input type="radio" class="btn-check" name="SelectedColor" id="color-@color" value="@color" required>
+                            <input type="radio" class="btn-check" name="selectedColor" id="color-@color" value="@color" required>
                             <label class="btn btn-outline-dark" for="color-@color">@color</label>
                         }
                     </div>
@@ -73,26 +84,15 @@
                     <div class="d-flex gap-2 mt-2">
                         @foreach (var size in Model.AvailableSizes)
                         {
-                            <input type="radio" class="btn-check" name="SelectedSize" id="size-@size" value="@size" required>
+                            <input type="radio" class="btn-check" name="selectedSize" id="size-@size" value="@size" required>
                             <label class="btn btn-outline-secondary" for="size-@size">@size</label>
                         }
                     </div>
                 </div>
 
-                @if (User?.Identity?.IsAuthenticated == true)
-                {
-                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold">
-                        <i class="bi bi-cart-plus"></i> THÊM VÀO GIỎ HÀNG
-                    </button>
-                }
-                else
-                {
-                    <div class="alert alert-warning text-center">
-                        <i class="bi bi-exclamation-triangle"></i> 
-                        Vui lòng <a asp-controller="Auth" asp-action="Login" class="fw-bold">Đăng nhập</a> để có thể mua hàng.
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-lg w-100 disabled">THÊM VÀO GIỎ HÀNG</button>
-                }
+                <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold">
+                    <i class="bi bi-cart-plus"></i> THÊM VÀO GIỎ HÀNG
+                </button>
             </form>
         </div>
     </div>

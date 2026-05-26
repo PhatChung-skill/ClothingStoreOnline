@@ -68,6 +68,12 @@ namespace ClothingStoreWeb.Controllers
 
                 if (user != null)
                 {
+                    if (user.IsLocked)
+                    {
+                        ModelState.AddModelError("", "Tài khoản của bạn đã bị khóa do vi phạm chính sách hoặc spam hệ thống!");
+                        return View(model);
+                    }
+
                     // Tạo danh sách Claims (Thông tin lưu trong Cookie)
                     var claims = new List<Claim>
                     {
