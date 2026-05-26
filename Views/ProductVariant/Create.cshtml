@@ -1,0 +1,34 @@
+@model ClothingStoreWeb.Models.ProductVariant
+@{
+    ViewData["Title"] = "Thêm biến thể";
+}
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h2>Thêm Biến thể cho @ViewBag.ProductName</h2>
+        <form asp-action="Create" method="post">
+            <input type="hidden" asp-for="ProductID" />
+            
+            <div class="mb-3">
+                <label class="form-label">Màu sắc</label>
+                <input asp-for="Color" class="form-control" placeholder="VD: Đen, Trắng, Caro..." />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Kích cỡ (Size)</label>
+                <input asp-for="Size" class="form-control" placeholder="VD: S, M, L, XL, 32, 33..." />
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Số lượng tồn kho</label>
+                <input asp-for="StockQuantity" class="form-control" type="number" value="1" />
+                <span asp-validation-for="StockQuantity" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Lưu biến thể</button>
+            <a asp-action="Index" asp-route-productId="@Model.ProductID" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>

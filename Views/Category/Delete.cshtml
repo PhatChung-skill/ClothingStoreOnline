@@ -1,0 +1,19 @@
+@model ClothingStoreWeb.Models.Category
+@{
+    ViewData["Title"] = "Xóa Danh mục";
+}
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h2 class="text-danger">Xác nhận xóa!</h2>
+        <div class="alert alert-danger">
+            Bạn có chắc chắn muốn xóa danh mục <strong>@Model.Name</strong> không? Hành động này không thể hoàn tác.
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="CategoryID" />
+            <button type="submit" class="btn btn-danger">Đồng ý xóa</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>

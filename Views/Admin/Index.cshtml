@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h2 class="text-primary"><i class="bi bi-speedometer2"></i> BẢNG ĐIỀU KHIỂN QUẢN TRỊ</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Danh Mục Phân Loại</div>
+            <div class="card-body">
+                <h5 class="card-title">Quản lý Danh Mục</h5>
+                <p class="card-text">Thêm, sửa, xóa các loại quần áo (Áo thun, Quần Jean...).</p>
+                <a asp-controller="Category" asp-action="Index" class="btn btn-light text-success fw-bold">Truy cập ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Kho Sản Phẩm</div>
+            <div class="card-body">
+                <h5 class="card-title">Quản lý Sản Phẩm</h5>
+                <p class="card-text">Thêm đồ mới, cập nhật giá, hình ảnh và tồn kho.</p>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-light text-primary fw-bold">Truy cập ngay</a>
+            </div>
+        </div>
+    </div>
+</div>

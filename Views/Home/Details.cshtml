@@ -1,0 +1,99 @@
+@model ClothingStoreWeb.ViewModels.ProductDetailsVM
+@{
+    ViewData["Title"] = Model.Product.Name;
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div id="productCarousel" class="carousel slide border shadow-sm" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.Product.ProductImages.Count; i++)
+                    {
+                        var img = Model.Product.ProductImages.ToList()[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <img src="@img.ImageUrl" class="d-block w-100" style="height: 500px; object-fit: cover;">
+                        </div>
+                    }
+                    @if (!Model.Product.ProductImages.Any())
+                    {
+                        <div class="carousel-item active">
+                            <img src="/images/no-image.png" class="d-block w-100" style="height: 500px; object-fit: cover;">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle"></span>
+                </button>
+            </div>
+            
+            <div class="d-flex mt-2 justify-content-center">
+                @foreach (var img in Model.Product.ProductImages)
+                {
+                    <img src="@img.ImageUrl" class="img-thumbnail me-2" style="width: 80px; height: 80px; cursor: pointer; object-fit: cover;">
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@((Model.Product.Category?.Name) ?? "N/A")</li>
+                </ol>
+            </nav>
+
+            <h1 class="fw-bold">@Model.Product.Name</h1>
+            <h3 class="text-danger fw-bold my-3">@Model.Product.BasePrice.ToString("N0") VNĐ</h3>
+            
+            <div class="my-4">
+                <h5>Mô tả sản phẩm:</h5>
+                <p class="text-muted">@Model.Product.Description</p>
+            </div>
+
+            <hr />
+
+            <form action="#">
+                <div class="mb-3">
+                    <label class="fw-bold">Chọn Màu sắc:</label>
+                    <div class="d-flex gap-2 mt-2">
+                        @foreach (var color in Model.AvailableColors)
+                        {
+                            <input type="radio" class="btn-check" name="SelectedColor" id="color-@color" value="@color" required>
+                            <label class="btn btn-outline-dark" for="color-@color">@color</label>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="fw-bold">Chọn Kích cỡ (Size):</label>
+                    <div class="d-flex gap-2 mt-2">
+                        @foreach (var size in Model.AvailableSizes)
+                        {
+                            <input type="radio" class="btn-check" name="SelectedSize" id="size-@size" value="@size" required>
+                            <label class="btn btn-outline-secondary" for="size-@size">@size</label>
+                        }
+                    </div>
+                </div>
+
+                @if (User?.Identity?.IsAuthenticated == true)
+                {
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold">
+                        <i class="bi bi-cart-plus"></i> THÊM VÀO GIỎ HÀNG
+                    </button>
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        Vui lòng <a asp-controller="Auth" asp-action="Login" class="fw-bold">Đăng nhập</a> để có thể mua hàng.
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-lg w-100 disabled">THÊM VÀO GIỎ HÀNG</button>
+                }
+            </form>
+        </div>
+    </div>
+</div>

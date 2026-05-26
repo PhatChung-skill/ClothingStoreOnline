@@ -1,8 +1,101 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<ClothingStoreWeb.Models.Product>
+@{
+    ViewData["Title"] = "Trang chủ - Cửa hàng thời trang";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /* Hiệu ứng khung chứa ảnh */
+    .product-img-container {
+        position: relative;
+        height: 350px;
+        overflow: hidden;
+        background-color: #f8f9fa; /* Màu nền xám nhạt nếu ảnh chưa load */
+    }
+
+    /* Định dạng chung cho 2 ảnh */
+    .product-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 0.4s ease-in-out;
+    }
+
+    /* Ảnh mặc định (Ảnh 1) */
+    .img-default {
+        opacity: 1;
+    }
+
+    /* Ảnh khi lướt chuột (Ảnh 2) */
+    .img-hover {
+        opacity: 0;
+    }
+
+    /* Hiệu ứng: Khi lướt chuột vào khung, ẩn ảnh 1, hiện ảnh 2 */
+    .product-img-container:hover .img-default {
+        opacity: 0;
+    }
+    .product-img-container:hover .img-hover {
+        opacity: 1;
+    }
+
+    .card-product {
+        border: none;
+        transition: transform 0.3s;
+    }
+    .card-product:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-5 fw-bold">SẢN PHẨM MỚI NHẤT</h2>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var defaultImg = item.ProductImages.FirstOrDefault(i => i.IsThumbnail)?.ImageUrl 
+                             ?? item.ProductImages.FirstOrDefault()?.ImageUrl 
+                             ?? "/images/no-image.png"; // Ảnh mặc định nếu chưa up ảnh
+            
+            var hoverImg = item.ProductImages.Skip(1).FirstOrDefault()?.ImageUrl ?? defaultImg;
+
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card card-product h-100">
+                    
+                    <a asp-controller="Home" asp-action="Details" asp-route-id="@item.ProductID">
+                        <div class="product-img-container">
+                            <img src="@defaultImg" class="img-default" alt="@item.Name" />
+                            <img src="@hoverImg" class="img-hover" alt="@item.Name" />
+                        </div>
+                    </a>
+
+                    <div class="card-body text-center">
+                        <h6 class="card-title text-truncate" title="@item.Name">@item.Name</h6>
+                        <p class="card-text text-danger fw-bold fs-5">@item.BasePrice.ToString("N0") đ</p>
+                        
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-dark w-100">Xem chi tiết</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-dark w-100">Đăng nhập để Mua</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center text-muted mt-5">
+                <h4>Hiện chưa có sản phẩm nào.</h4>
+                <p>Admin vui lòng đăng nhập vào Dashboard để thêm sản phẩm nhé!</p>
+            </div>
+        }
+    </div>
 </div>

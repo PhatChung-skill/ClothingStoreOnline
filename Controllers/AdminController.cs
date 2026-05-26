@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ClothingStoreWeb.Controllers
 {
-    [Authorize(Roles = "Admin")] // Chặn, chỉ cho Admin vào
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         public IActionResult Index()
         {
-            return Content("CHÀO MỪNG ADMIN ĐẾN VỚI TRANG QUẢN TRỊ CAO NHẤT!");
+            return View();
         }
     }
 }

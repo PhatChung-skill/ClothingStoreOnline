@@ -1,0 +1,52 @@
+@model IEnumerable<ClothingStoreWeb.Models.Product>
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+
+<div class="mt-4">
+    <h2>Danh sách Sản phẩm</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">Thêm sản phẩm mới</a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã</th>
+                <th>Tên sản phẩm</th>
+                <th>Danh mục</th>
+                <th>Giá gốc</th>
+                <th>Quản lý chi tiết</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductID</td>
+                    <td class="fw-bold">@item.Name</td>
+                    <td>@item.Category?.Name</td>
+                    <td class="text-danger fw-bold">@item.BasePrice.ToString("N0") đ</td>
+                    <td>
+                        <a asp-controller="ProductImage" asp-action="Index" asp-route-productId="@item.ProductID" class="btn btn-sm btn-info text-white">
+                            <i class="bi bi-images"></i> Ảnh
+                        </a>
+                        <a asp-controller="ProductVariant" asp-action="Index" asp-route-productId="@item.ProductID" class="btn btn-sm btn-success">
+                            <i class="bi bi-box-seam"></i> Tồn kho
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-warning">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Quay lại Dashboard</a>
+</div>

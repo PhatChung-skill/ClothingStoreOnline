@@ -1,0 +1,41 @@
+@model ClothingStoreWeb.ViewModels.ProductVM
+@{
+    ViewData["Title"] = "Thêm Sản phẩm";
+}
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h2>Thêm Thông tin Gốc Sản phẩm</h2>
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Thuộc Danh mục</label>
+                <select asp-for="CategoryID" asp-items="@Model.CategoryList" class="form-select">
+                    <option disabled selected>-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="CategoryID" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tên sản phẩm</label>
+                <input asp-for="Name" class="form-control" placeholder="VD: Áo thun tay lỡ Form rộng" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Giá bán gốc (VNĐ)</label>
+                <input asp-for="BasePrice" class="form-control" type="number" />
+                <span asp-validation-for="BasePrice" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Mô tả sản phẩm</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success">Lưu thông tin</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+        </form>
+    </div>
+</div>

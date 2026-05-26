@@ -1,0 +1,56 @@
+@model IEnumerable<ClothingStoreWeb.Models.ProductVariant>
+@{
+    ViewData["Title"] = "Quản lý tồn kho";
+}
+
+<div class="mt-4">
+    <h2>Biến thể & Tồn kho: <span class="text-primary">@ViewBag.ProductName</span></h2>
+    <hr />
+
+    <a asp-action="Create" asp-route-productId="@ViewBag.ProductId" class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle"></i> Thêm Size/Màu mới
+    </a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Màu sắc</th>
+                <th>Kích cỡ (Size)</th>
+                <th>Số lượng tồn</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Color</td>
+                    <td><span class="badge bg-secondary">@item.Size</span></td>
+                    <td class="fw-bold @(item.StockQuantity <= 5 ? "text-danger" : "")">
+                        @item.StockQuantity
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.VariantID" class="btn btn-sm btn-warning">Sửa</a>
+                        <form asp-action="Delete" method="post" style="display:inline-block;">
+                            <input type="hidden" name="variantId" value="@item.VariantID" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Xóa biến thể này?')">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-muted">Chưa có biến thể nào. Hãy thêm Size và Màu sắc.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-controller="Product" asp-action="Index" class="btn btn-secondary">Quay lại danh sách sản phẩm</a>
+</div>

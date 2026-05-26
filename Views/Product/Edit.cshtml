@@ -1,0 +1,40 @@
+@model ClothingStoreWeb.ViewModels.ProductVM
+@{
+    ViewData["Title"] = "Sửa Sản phẩm";
+}
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h2>Cập nhật Sản phẩm</h2>
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductID" />
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Danh mục</label>
+                <select asp-for="CategoryID" asp-items="@Model.CategoryList" class="form-select"></select>
+                <span asp-validation-for="CategoryID" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tên sản phẩm</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Giá bán gốc</label>
+                <input asp-for="BasePrice" class="form-control" type="number" />
+                <span asp-validation-for="BasePrice" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Mô tả</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-warning">Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+        </form>
+    </div>
+</div>

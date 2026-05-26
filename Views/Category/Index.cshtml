@@ -1,0 +1,39 @@
+@model IEnumerable<ClothingStoreWeb.Models.Category>
+@{
+    ViewData["Title"] = "Quản lý Danh mục";
+}
+
+<div class="mt-4">
+    <h2>Danh sách Danh mục</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">Tạo danh mục mới</a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã DM</th>
+                <th>Tên danh mục</th>
+                <th style="width: 200px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CategoryID</td>
+                    <td>@item.Name</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.CategoryID" class="btn btn-sm btn-warning">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.CategoryID" class="btn btn-sm btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Quay lại Dashboard</a>
+</div>
