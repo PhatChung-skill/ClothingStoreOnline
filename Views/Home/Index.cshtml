@@ -1,15 +1,61 @@
-﻿@model IEnumerable<ClothingStoreWeb.Models.Product>
+@model IEnumerable<ClothingStoreWeb.Models.Product>
 @{
     ViewData["Title"] = "Trang chủ - Cửa hàng thời trang";
+    var cartPreview = ViewBag.CartPreview as List<ClothingStoreWeb.Models.CartItem> ?? new List<ClothingStoreWeb.Models.CartItem>();
+    var cartCount = (int)(ViewBag.CartCount ?? 0);
+    var cartTotal = (decimal)(ViewBag.CartTotal ?? 0m);
+    var currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
 }
 
 <style>
+    .hero-home {
+        background: linear-gradient(120deg, #fff 0%, #fff4f5 45%, #ffeef0 100%);
+        border: 1px solid #f3d8da;
+        border-radius: 24px;
+        padding: 2.25rem;
+        box-shadow: 0 18px 35px rgba(165, 25, 30, 0.1);
+    }
+
+    .hero-title {
+        color: #d71920;
+        font-weight: 800;
+        line-height: 1.25;
+    }
+
+    .hero-subtitle {
+        color: #5a5a5a;
+    }
+
+    .quick-cart-card {
+        background: #fff;
+        border: 1px solid #f1d6d8;
+        border-radius: 18px;
+        box-shadow: 0 12px 28px rgba(160, 22, 27, 0.08);
+    }
+
+    .quick-cart-item {
+        border-bottom: 1px dashed #efd2d4;
+    }
+
+    .quick-cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .home-section-title {
+        color: #d71920;
+        text-align: center;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+    }
+
     /* Hiệu ứng khung chứa ảnh */
     .product-img-container {
         position: relative;
-        height: 350px;
+        height: 360px;
         overflow: hidden;
-        background-color: #f8f9fa; /* Màu nền xám nhạt nếu ảnh chưa load */
+        background-color: #fff8f8;
+        border-radius: 14px;
     }
 
     /* Định dạng chung cho 2 ảnh */
@@ -42,19 +88,101 @@
     }
 
     .card-product {
-        border: none;
-        transition: transform 0.3s;
+        border: 1px solid #f0d9db;
+        border-radius: 16px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .card-product:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-8px);
+        box-shadow: 0 16px 28px rgba(177, 27, 32, 0.15);
     }
 </style>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-5 fw-bold">SẢN PHẨM MỚI NHẤT</h2>
+<div class="container mt-4 mt-lg-5">
+    <div class="hero-home mb-4 mb-lg-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7 text-center text-lg-start">
+                <h1 class="hero-title mb-3">FASHION ĐỎ TRẮNG - NĂNG ĐỘNG MỖI NGÀY</h1>
+                <p class="hero-subtitle mb-4 fs-5">Khám phá bộ sưu tập mới với phong cách trẻ trung, chất liệu thoải mái và giá hợp lý cho mọi cá tính.</p>
+                <div class="d-flex justify-content-center justify-content-lg-start gap-2 flex-wrap">
+                    <a href="#products" class="btn btn-brand px-4 py-2">Mua ngay</a>
+                    @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-brand px-4 py-2">
+                            <i class="bi bi-cart3"></i> Vào giỏ hàng
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-brand px-4 py-2">Đăng nhập để mua hàng</a>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="quick-cart-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 fw-bold brand-title"><i class="bi bi-bag-heart"></i> Giỏ hàng của bạn</h5>
+                        <span class="badge bg-danger">@cartCount sản phẩm</span>
+                    </div>
+                    @if (User?.Identity?.IsAuthenticated == true && cartPreview.Any())
+                    {
+                        @foreach (var c in cartPreview)
+                        {
+                            <div class="quick-cart-item py-2">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-semibold">@c.ProductName</span>
+                                    <span class="text-danger fw-bold">@c.TotalPrice.ToString("N0") đ</span>
+                                </div>
+                                <small class="text-muted">Màu: @c.Color | Size: @c.Size | SL: @c.Quantity</small>
+                            </div>
+                        }
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <strong>Tạm tính:</strong>
+                            <strong class="text-danger">@cartTotal.ToString("N0") đ</strong>
+                        </div>
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-brand w-100 mt-3">Xem chi tiết giỏ hàng</a>
+                    }
+                    else if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        <p class="text-muted mb-3">Giỏ hàng đang trống. Chọn vài món để hệ thống lưu nhanh tại đây.</p>
+                        <a href="#products" class="btn btn-outline-brand w-100">Bắt đầu chọn sản phẩm</a>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-3">Đăng nhập để xem và lưu giỏ hàng của bạn dễ dàng hơn.</p>
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-brand w-100">Đăng nhập ngay</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div class="row">
+    <h2 id="products" class="home-section-title mb-3">SẢN PHẨM MỚI NHẤT</h2>
+
+    <div class="row mb-5 justify-content-center">
+        <div class="col-md-8 col-lg-6 text-center">
+            <form method="get" asp-action="Index" id="search-form">
+                <div class="input-group shadow-sm" style="border-radius: 12px; overflow: hidden; border: 1px solid #efc9cc;">
+                    <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control border-0 py-2" placeholder="Tìm kiếm sản phẩm theo tên, danh mục, mô tả..." style="outline: none; box-shadow: none; font-size: 0.95rem;" />
+                    @if (!string.IsNullOrEmpty(ViewBag.Search))
+                    {
+                        <a asp-action="Index" class="btn btn-light border-0 d-flex align-items-center justify-content-center text-muted px-3 clear-search-btn" title="Xóa tìm kiếm"><i class="bi bi-x-circle-fill"></i></a>
+                    }
+                    <button type="submit" class="btn btn-brand px-4 fw-bold">Tìm kiếm</button>
+                </div>
+                @if (!string.IsNullOrEmpty(ViewBag.Search))
+                {
+                    <div class="mt-2 text-muted small">
+                        Đang hiển thị kết quả cho từ khóa: <strong class="brand-title">"@ViewBag.Search"</strong>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div id="products-grid-container">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var item in Model)
         {
             var defaultImg = item.ProductImages.FirstOrDefault(i => i.IsThumbnail)?.ImageUrl 
@@ -63,8 +191,8 @@
             
             var hoverImg = item.ProductImages.Skip(1).FirstOrDefault()?.ImageUrl ?? defaultImg;
 
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card card-product h-100">
+            <div class="col d-flex">
+                <div class="card card-product h-100 w-100">
                     
                     <a asp-controller="Home" asp-action="Details" asp-route-id="@item.ProductID">
                         <div class="product-img-container">
@@ -74,16 +202,16 @@
                     </a>
 
                     <div class="card-body text-center">
-                        <h6 class="card-title text-truncate" title="@item.Name">@item.Name</h6>
+                        <h6 class="card-title text-truncate fw-semibold" title="@item.Name">@item.Name</h6>
                         <p class="card-text text-danger fw-bold fs-5">@item.BasePrice.ToString("N0") đ</p>
                         
                         @if (User?.Identity?.IsAuthenticated == true)
                         {
-                            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-dark w-100">Xem chi tiết</a>
+                            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-brand w-100">Xem chi tiết</a>
                         }
                         else
                         {
-                            <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-dark w-100">Đăng nhập để Mua</a>
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-brand w-100">Đăng nhập để Mua</a>
                         }
                     </div>
                 </div>
@@ -98,4 +226,111 @@
             </div>
         }
     </div>
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Phan trang san pham" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-search="@ViewBag.Search">Trước</a>
+                </li>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-search="@ViewBag.Search">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    }
+    </div> <!-- products-grid-container -->
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchForm = document.getElementById("search-form");
+    const gridContainer = document.getElementById("products-grid-container");
+
+    if (!searchForm || !gridContainer) return;
+
+    // Intercept form submission to use AJAX
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        performSearch();
+    });
+
+    // Delegate dynamic event handling for the clear button (it might be replaced)
+    searchForm.addEventListener("click", function (e) {
+        const clearBtn = e.target.closest(".clear-search-btn");
+        if (clearBtn) {
+            e.preventDefault();
+            const currentInput = searchForm.querySelector("input[name='search']");
+            if (currentInput) {
+                currentInput.value = "";
+            }
+            performSearch();
+        }
+    });
+
+    // Delegate dynamic pagination link clicks
+    document.addEventListener("click", function (e) {
+        const pageLink = e.target.closest("#products-grid-container .pagination .page-link");
+        if (pageLink) {
+            e.preventDefault();
+            const url = pageLink.getAttribute("href");
+            if (url && url !== "#") {
+                fetchResults(url);
+            }
+        }
+    });
+
+    function performSearch() {
+        const currentInput = searchForm.querySelector("input[name='search']");
+        const query = currentInput ? currentInput.value.trim() : "";
+        const url = new URL(window.location.origin + window.location.pathname);
+        if (query) {
+            url.searchParams.set("search", query);
+        }
+        url.searchParams.set("page", "1"); // reset page to 1 on new search
+        fetchResults(url.toString());
+    }
+
+    function fetchResults(url) {
+        // Show subtle premium fade transition while loading
+        gridContainer.style.opacity = "0.5";
+        gridContainer.style.transition = "opacity 0.15s ease";
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+
+                // Update the product list grid and pagination dynamically
+                const newGrid = doc.getElementById("products-grid-container");
+                if (newGrid) {
+                    gridContainer.innerHTML = newGrid.innerHTML;
+                    gridContainer.style.opacity = "1";
+                }
+
+                // Update search input field, query details, and clear button
+                const newSearchForm = doc.getElementById("search-form");
+                if (newSearchForm) {
+                    searchForm.innerHTML = newSearchForm.innerHTML;
+                }
+
+                // Update browser URL silently without reloading
+                window.history.pushState({ path: url }, "", url);
+            })
+            .catch(error => {
+                console.error("Lỗi khi tải kết quả tìm kiếm:", error);
+                gridContainer.style.opacity = "1";
+            });
+    }
+});
+</script>
+}

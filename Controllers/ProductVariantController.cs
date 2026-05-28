@@ -17,17 +17,40 @@ namespace ClothingStoreWeb.Controllers
         }
 
         // 1. DANH SÁCH BIẾN THỂ CỦA 1 SẢN PHẨM
-        public IActionResult Index(int productId)
+        public async Task<IActionResult> Index(int productId, string? search = null, int page = 1)
         {
-            var product = _context.Products.Find(productId);
+            const int pageSize = 10;
+            if (page < 1) page = 1;
+
+            var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.ProductID == productId);
             if (product == null) return NotFound();
 
             ViewBag.ProductName = product.Name;
             ViewBag.ProductId = productId;
 
-            var variants = _context.ProductVariants
-                                   .Where(v => v.ProductID == productId)
-                                   .ToList();
+            IQueryable<ProductVariant> query = _context.ProductVariants.Where(v => v.ProductID == productId);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var cleanSearch = search.Trim().ToLower();
+                query = query.Where(v => v.Color.ToLower().Contains(cleanSearch)
+                                      || v.Size.ToLower().Contains(cleanSearch));
+            }
+
+            query = query.OrderByDescending(v => v.VariantID);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
+
+            var variants = await query.AsNoTracking()
+                                      .Skip((page - 1) * pageSize)
+                                      .Take(pageSize)
+                                      .ToListAsync();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Search = search;
             return View(variants);
         }
 

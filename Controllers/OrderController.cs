@@ -17,25 +17,54 @@ namespace ClothingStoreWeb.Controllers
         }
 
         // 1. TRANG DANH SÁCH ĐƠN HÀNG
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? search = null, string? status = null, int page = 1)
         {
-            // Lấy tất cả đơn hàng, kèm theo thông tin người dùng (User)
-            var orders = _context.Orders
-                                 .Include(o => o.User)
-                                 .OrderByDescending(o => o.OrderDate)
-                                 .ToList();
+            const int pageSize = 10;
+            if (page < 1) page = 1;
+
+            IQueryable<Order> query = _context.Orders.Include(o => o.User);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var cleanSearch = search.Trim().ToLower();
+                query = query.Where(o => o.ReceiverName.ToLower().Contains(cleanSearch)
+                                      || o.OrderID.ToString() == cleanSearch
+                                      || (o.User != null && o.User.Username.ToLower().Contains(cleanSearch)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(o => o.Status == status);
+            }
+
+            query = query.OrderByDescending(o => o.OrderDate);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
+
+            var orders = await query.AsNoTracking()
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Search = search;
+            ViewBag.Status = status;
             return View(orders);
         }
 
         // 2. XEM CHI TIẾT ĐƠN HÀNG (OrderDetail)
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var order = _context.Orders
-                                .Include(o => o.User)
-                                .Include(o => o.OrderDetails)
-                                    .ThenInclude(od => od.ProductVariant)
-                                        .ThenInclude(v => v!.Product)
-                                .FirstOrDefault(o => o.OrderID == id);
+            var order = await _context.Orders
+                                      .AsNoTracking()
+                                      .Include(o => o.User)
+                                      .Include(o => o.OrderDetails)
+                                          .ThenInclude(od => od.ProductVariant)
+                                              .ThenInclude(v => v!.Product)
+                                      .FirstOrDefaultAsync(o => o.OrderID == id);
 
             if (order == null) return NotFound();
 

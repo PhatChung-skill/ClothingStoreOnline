@@ -7,6 +7,7 @@ using System.Text;
 using ClothingStoreWeb.Data;
 using ClothingStoreWeb.Models;
 using ClothingStoreWeb.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClothingStoreWeb.Controllers
 {
@@ -59,12 +60,14 @@ namespace ClothingStoreWeb.Controllers
         public IActionResult Login() => View();
 
         [HttpPost]
-        public IActionResult Login(LoginVM model)
+        public async Task<IActionResult> Login(LoginVM model)
         {
             if (ModelState.IsValid)
             {
                 var hashedPassword = HashPassword(model.Password);
-                var user = _context.Users.SingleOrDefault(u => u.Username == model.Username && u.PasswordHash == hashedPassword);
+                var user = await _context.Users
+                                         .AsNoTracking()
+                                         .SingleOrDefaultAsync(u => u.Username == model.Username && u.PasswordHash == hashedPassword);
 
                 if (user != null)
                 {
@@ -86,12 +89,10 @@ namespace ClothingStoreWeb.Controllers
                     var authProperties = new AuthenticationProperties { IsPersistent = true };
 
                     // Đăng nhập hệ thống
-                    HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                    // Chuyển hướng dựa trên Role
-                    if (user.Role == "Admin") return RedirectToAction("Index", "Admin");
-                    if (user.Role == "Staff") return RedirectToAction("Index", "Staff");
-                    return RedirectToAction("Index", "Home"); // Khách hàng
+                    // Mọi role đều chuyển về trang chủ trước tiên
+                    return RedirectToAction("Index", "Home");
                 }
 
                 ModelState.AddModelError("", "Sai tên đăng nhập hoặc mật khẩu.");
@@ -100,9 +101,9 @@ namespace ClothingStoreWeb.Controllers
         }
 
         // --- ĐĂNG XUẤT ---
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
 

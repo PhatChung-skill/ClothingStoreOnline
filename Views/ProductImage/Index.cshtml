@@ -1,6 +1,8 @@
 @model IEnumerable<ClothingStoreWeb.Models.ProductImage>
 @{
     ViewData["Title"] = "Quản lý hình ảnh";
+    var currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
 }
 
 <div class="mt-4">
@@ -55,6 +57,26 @@
             <p class="text-muted">Chưa có hình ảnh nào cho sản phẩm này.</p>
         }
     </div>
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Phan trang hinh anh" class="mb-3">
+            <ul class="pagination">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-productId="@ViewBag.ProductId" asp-route-page="@(currentPage - 1)">Truoc</a>
+                </li>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-productId="@ViewBag.ProductId" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-productId="@ViewBag.ProductId" asp-route-page="@(currentPage + 1)">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    }
 
     <a asp-controller="Product" asp-action="Index" class="btn btn-secondary mt-3">Quay lại danh sách sản phẩm</a>
 </div>

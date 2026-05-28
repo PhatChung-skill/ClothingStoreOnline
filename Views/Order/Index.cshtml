@@ -1,6 +1,8 @@
 @model IEnumerable<ClothingStoreWeb.Models.Order>
 @{
     ViewData["Title"] = "Quản lý Đơn hàng";
+    var currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
 }
 
 <div class="mt-4">
@@ -20,6 +22,33 @@
     {
         <div class="alert alert-success">@TempData["Success"]</div>
     }
+
+    <form method="get" class="mb-4 bg-light p-3 border rounded shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Tìm Mã Đơn, Khách hàng..." style="font-size: 0.9rem;" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="status" class="form-select" style="font-size: 0.9rem;" onchange="this.form.submit()">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="Pending" selected="@(ViewBag.Status == "Pending")">Chờ duyệt</option>
+                    <option value="Shipping" selected="@(ViewBag.Status == "Shipping")">Đang giao</option>
+                    <option value="Completed" selected="@(ViewBag.Status == "Completed")">Hoàn thành</option>
+                    <option value="Cancelled" selected="@(ViewBag.Status == "Cancelled")">Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-dark w-100 fw-bold" style="font-size: 0.9rem;">Lọc đơn</button>
+                @if (!string.IsNullOrEmpty(ViewBag.Search) || !string.IsNullOrEmpty(ViewBag.Status))
+                {
+                    <a asp-action="Index" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" title="Xóa bộ lọc"><i class="bi bi-x-lg"></i></a>
+                }
+            </div>
+        </div>
+    </form>
 
     <table class="table table-hover border">
         <thead class="table-dark">
@@ -74,4 +103,24 @@
             }
         </tbody>
     </table>
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Phan trang don hang">
+            <ul class="pagination">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">Trước</a>
+                </li>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    }
 </div>

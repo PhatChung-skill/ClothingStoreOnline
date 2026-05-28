@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,9 +12,9 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom fixed-top">
             <div class="container">
-                <a class="navbar-brand fw-bold fs-3 text-primary" asp-controller="Home" asp-action="Index">CLOTHING STORE</a>
+                <a class="navbar-brand fw-bold fs-3 brand-title" asp-controller="Home" asp-action="Index">CLOTHING STORE</a>
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -31,13 +31,13 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="btn btn-outline-primary btn-sm me-2" asp-controller="Admin" asp-action="Index">Dashboard Admin</a>
+                                    <a class="btn btn-outline-brand btn-sm me-2" asp-controller="Admin" asp-action="Index">Dashboard Admin</a>
                                 </li>
                             }
                             else if (User.IsInRole("Staff"))
                             {
                                 <li class="nav-item me-2">
-                                    <a class="btn btn-outline-success btn-sm fw-bold" asp-controller="Chat" asp-action="StaffList">
+                                    <a class="btn btn-outline-brand btn-sm fw-bold" asp-controller="Chat" asp-action="StaffList">
                                         <i class="bi bi-headset"></i> Hỗ trợ Khách hàng
                                     </a>
                                 </li>
@@ -48,14 +48,14 @@
                             else 
                             {
                                 <li class="nav-item me-2">
-                                    <a class="btn btn-outline-success btn-sm fw-bold" asp-controller="Chat" asp-action="Index">
+                                    <a class="btn btn-outline-brand btn-sm fw-bold" asp-controller="Chat" asp-action="Index">
                                         <i class="bi bi-question-circle"></i> Thắc mắc / Khiếu nại
                                     </a>
                                 </li>
                             }
 
                             <li class="nav-item">
-                                <a class="btn btn-danger btn-sm" asp-controller="Auth" asp-action="Logout">Đăng xuất</a>
+                                <a class="btn btn-brand btn-sm" asp-controller="Auth" asp-action="Logout">Đăng xuất</a>
                             </li>
                         }
                         else
@@ -64,7 +64,7 @@
                                 <a class="nav-link text-dark fw-bold" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
                             </li>
                             <li class="nav-item ms-2">
-                                <a class="btn btn-primary btn-sm text-white" asp-controller="Auth" asp-action="Register">Đăng ký</a>
+                                <a class="btn btn-brand btn-sm text-white" asp-controller="Auth" asp-action="Register">Đăng ký</a>
                             </li>
                         }
                     </ul>
@@ -78,9 +78,88 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <a class="floating-cart-btn" asp-controller="Cart" asp-action="Index" title="Xem giỏ hàng">
+            <i class="bi bi-cart3"></i>
+        </a>
+    }
+
+    <footer class="mega-footer text-muted pt-5">
         <div class="container">
-            &copy; 2026 - ClothingStoreWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row g-4 mb-4 text-start">
+                <!-- Cột 1: Giới thiệu -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white fw-bold mb-3">CLOTHING STORE</h5>
+                    <p class="mb-3" style="line-height: 1.6; color: #f7d2d4;">
+                        Fashion Đỏ Trắng - Tự hào mang đến những sản phẩm thời trang trẻ trung, cá tính và chất lượng cao. Khơi nguồn cảm hứng mặc đẹp mỗi ngày cùng bạn!
+                    </p>
+                    <div class="d-flex mt-3">
+                        <a href="#" class="footer-social-link" title="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="footer-social-link" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="footer-social-link" title="TikTok"><i class="bi bi-tiktok"></i></a>
+                        <a href="#" class="footer-social-link" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Cột 2: Thông tin liên hệ -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white fw-bold mb-3">THÔNG TIN LIÊN HỆ</h5>
+                    <div class="footer-contact-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div>
+                            <span class="d-block text-white fw-semibold">Hotline hỗ trợ:</span>
+                            <a href="tel:+84862775087" class="fs-5 text-white fw-bold" style="color: #ffffff !important;">(+84) 862 775 087</a>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="bi bi-envelope-fill"></i>
+                        <div>
+                            <span class="d-block text-white fw-semibold">Email liên hệ:</span>
+                            <a href="mailto:1250080133@sv.hcmunre.edu.vn">1250080133@sv.hcmunre.edu.vn</a>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <span class="d-block text-white fw-semibold">Địa chỉ cửa hàng:</span>
+                            <span style="color: #f7d2d4;">66/47/8/2 Đường HT45, Quận 12, TP.HCM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cột 3: Liên kết nhanh -->
+                <div class="col-lg-4 col-md-12">
+                    <h5 class="text-white fw-bold mb-3">LIÊN KẾT NHANH</h5>
+                    <div class="row row-cols-2 g-2">
+                        <div class="col">
+                            <a asp-controller="Home" asp-action="Index" class="d-block py-1"><i class="bi bi-chevron-right small me-1"></i> Trang chủ</a>
+                        </div>
+                        <div class="col">
+                            <a asp-controller="Cart" asp-action="Index" class="d-block py-1"><i class="bi bi-chevron-right small me-1"></i> Giỏ hàng</a>
+                        </div>
+                        <div class="col">
+                            <a asp-controller="Auth" asp-action="Login" class="d-block py-1"><i class="bi bi-chevron-right small me-1"></i> Đăng nhập</a>
+                        </div>
+                        <div class="col">
+                            <a asp-controller="Auth" asp-action="Register" class="d-block py-1"><i class="bi bi-chevron-right small me-1"></i> Đăng ký</a>
+                        </div>
+                        <div class="col">
+                            <a asp-controller="Home" asp-action="Privacy" class="d-block py-1"><i class="bi bi-chevron-right small me-1"></i> Bảo mật</a>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-top border-secondary">
+                        <p class="small text-muted mb-0"><i class="bi bi-clock-fill text-danger me-1"></i> Giờ mở cửa: 08:00 - 22:00 tất cả các ngày trong tuần</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bản quyền -->
+        <div class="footer-bottom text-center">
+            <div class="container">
+                <p class="mb-0 text-muted">&copy; 2026 - <span class="text-white fw-bold">CLOTHING STORE</span>. Tất cả quyền được bảo lưu. Thiết kế bởi Fashion Đỏ Trắng.</p>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ClothingStoreWeb.Data;
 using ClothingStoreWeb.Models;
 
@@ -16,9 +17,34 @@ namespace ClothingStoreWeb.Controllers
         }
 
         // 1. HIỂN THỊ DANH SÁCH (Read)
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? search = null, int page = 1)
         {
-            var categories = _context.Categories.ToList();
+            const int pageSize = 10;
+            if (page < 1) page = 1;
+
+            IQueryable<Category> query = _context.Categories;
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var cleanSearch = search.Trim().ToLower();
+                query = query.Where(c => c.Name.ToLower().Contains(cleanSearch)
+                                      || c.CategoryID.ToString() == cleanSearch);
+            }
+
+            query = query.OrderByDescending(c => c.CategoryID);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
+
+            var categories = await query.AsNoTracking()
+                                        .Skip((page - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .ToListAsync();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Search = search;
             return View(categories);
         }
 

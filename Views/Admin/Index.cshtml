@@ -2,54 +2,74 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="row mt-4">
-    <div class="col-12">
-        <h2 class="text-primary"><i class="bi bi-speedometer2"></i> BẢNG ĐIỀU KHIỂN QUẢN TRỊ</h2>
-        <hr />
-    </div>
+<style>
+    .admin-hero {
+        background: linear-gradient(120deg, #ffffff 0%, #fff3f4 60%, #ffe9eb 100%);
+        border: 1px solid #f2d4d7;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 14px 30px rgba(152, 20, 26, 0.1);
+    }
+
+    .admin-card {
+        border: 1px solid #f1d6d8;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(120, 20, 20, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .admin-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 30px rgba(120, 20, 20, 0.14);
+    }
+</style>
+
+<div class="admin-hero mt-4 mb-4 text-center">
+    <h2 class="brand-title fw-bold mb-2"><i class="bi bi-speedometer2"></i> BẢNG ĐIỀU KHIỂN QUẢN TRỊ</h2>
+    <p class="mb-0 text-muted">Quản lý danh mục, sản phẩm, đơn hàng và người dùng trên cùng một màn hình rõ ràng, cân đối.</p>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card text-white bg-success mb-3">
-            <div class="card-header">Danh Mục Phân Loại</div>
-            <div class="card-body">
-                <h5 class="card-title">Quản lý Danh Mục</h5>
-                <p class="card-text">Thêm, sửa, xóa các loại quần áo (Áo thun, Quần Jean...).</p>
-                <a asp-controller="Category" asp-action="Index" class="btn btn-light text-success fw-bold">Truy cập ngay</a>
+<div class="row justify-content-center g-4">
+    <div class="col-lg-6 col-xl-4">
+        <div class="card admin-card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 fs-3 brand-title"><i class="bi bi-tags"></i></div>
+                <h5 class="card-title fw-bold">Danh Mục Phân Loại</h5>
+                <p class="card-text text-muted">Thêm, sửa, xóa các loại quần áo như áo thun, quần jean và nhóm sản phẩm mới.</p>
+                <a asp-controller="Category" asp-action="Index" class="btn btn-brand px-4">Truy cập ngay</a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card text-white bg-primary mb-3">
-            <div class="card-header">Kho Sản Phẩm</div>
-            <div class="card-body">
-                <h5 class="card-title">Quản lý Sản Phẩm</h5>
-                <p class="card-text">Thêm đồ mới, cập nhật giá, hình ảnh và tồn kho.</p>
-                <a asp-controller="Product" asp-action="Index" class="btn btn-light text-primary fw-bold">Truy cập ngay</a>
+    <div class="col-lg-6 col-xl-4">
+        <div class="card admin-card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 fs-3 brand-title"><i class="bi bi-box-seam"></i></div>
+                <h5 class="card-title fw-bold">Kho Sản Phẩm</h5>
+                <p class="card-text text-muted">Cập nhật thông tin sản phẩm, giá, hình ảnh và theo dõi tồn kho theo từng biến thể.</p>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-brand px-4">Truy cập ngay</a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card text-white bg-danger mb-3">
-            <div class="card-header">Đơn Hàng</div>
-            <div class="card-body">
-                <h5 class="card-title">Quản lý Đơn hàng</h5>
-                <p class="card-text">Duyệt đơn, cập nhật trạng thái vận chuyển và doanh thu.</p>
-                <a asp-controller="Order" asp-action="Index" class="btn btn-light text-danger fw-bold">Truy cập ngay</a>
+    <div class="col-lg-6 col-xl-4">
+        <div class="card admin-card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 fs-3 brand-title"><i class="bi bi-receipt"></i></div>
+                <h5 class="card-title fw-bold">Đơn Hàng</h5>
+                <p class="card-text text-muted">Duyệt đơn, cập nhật trạng thái xử lý và theo dõi vận chuyển cho từng khách hàng.</p>
+                <a asp-controller="Order" asp-action="Index" class="btn btn-brand px-4">Truy cập ngay</a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Thành Viên Hệ Thống</div>
-            <div class="card-body">
-                <h5 class="card-title">Quản lý Người dùng</h5>
-                <p class="card-text">Kiểm soát danh sách thành viên, phân quyền Staff và xử lý khóa tài khoản spam.</p>
-                <a asp-controller="User" asp-action="Index" class="btn btn-light text-dark fw-bold">Truy cập ngay</a>
+    <div class="col-lg-6 col-xl-4">
+        <div class="card admin-card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3 fs-3 brand-title"><i class="bi bi-people"></i></div>
+                <h5 class="card-title fw-bold">Thành Viên Hệ Thống</h5>
+                <p class="card-text text-muted">Quản lý tài khoản, phân quyền vai trò và xử lý các tài khoản cần kiểm soát.</p>
+                <a asp-controller="User" asp-action="Index" class="btn btn-brand px-4">Truy cập ngay</a>
             </div>
         </div>
     </div>

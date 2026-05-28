@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ClothingStoreWeb.Data;
 using ClothingStoreWeb.Models;
 
@@ -18,15 +19,32 @@ namespace ClothingStoreWeb.Controllers
         }
 
         // 1. HIỂN THỊ DANH SÁCH ẢNH CỦA 1 SẢN PHẨM
-        public IActionResult Index(int productId)
+        public async Task<IActionResult> Index(int productId, int page = 1)
         {
-            var product = _context.Products.Find(productId);
+            const int pageSize = 10;
+            if (page < 1) page = 1;
+
+            var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.ProductID == productId);
             if (product == null) return NotFound();
 
             ViewBag.ProductName = product.Name;
             ViewBag.ProductId = productId;
 
-            var images = _context.ProductImages.Where(i => i.ProductID == productId).ToList();
+            var query = _context.ProductImages
+                                .Where(i => i.ProductID == productId)
+                                .OrderByDescending(i => i.ImageID);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
+
+            var images = await query.AsNoTracking()
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
             return View(images);
         }
 
@@ -37,7 +55,7 @@ namespace ClothingStoreWeb.Controllers
             if (file == null || file.Length == 0) return BadRequest("Chưa chọn file.");
 
             // KIỂM TRA ĐIỀU KIỆN 3 ẢNH
-            int currentImageCount = _context.ProductImages.Count(i => i.ProductID == productId);
+            int currentImageCount = await _context.ProductImages.CountAsync(i => i.ProductID == productId);
             if (currentImageCount >= 3)
             {
                 TempData["Error"] = "Sản phẩm này đã đạt tối đa 3 ảnh. Hãy xóa bớt trước khi thêm mới.";

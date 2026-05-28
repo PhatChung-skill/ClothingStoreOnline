@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ClothingStoreWeb.Data;
 using ClothingStoreWeb.Models;
 
@@ -16,9 +17,42 @@ namespace ClothingStoreWeb.Controllers
         }
 
         // 1. HIỂN THỊ DANH SÁCH TÀI KHOẢN
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? search = null, string? role = null, int page = 1)
         {
-            var users = _context.Users.ToList();
+            const int pageSize = 10;
+            if (page < 1) page = 1;
+
+            IQueryable<User> query = _context.Users;
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var cleanSearch = search.Trim().ToLower();
+                query = query.Where(u => u.Username.ToLower().Contains(cleanSearch)
+                                      || (u.FullName != null && u.FullName.ToLower().Contains(cleanSearch))
+                                      || u.Email.ToLower().Contains(cleanSearch)
+                                      || (u.Phone != null && u.Phone.ToLower().Contains(cleanSearch)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(role))
+            {
+                query = query.Where(u => u.Role == role);
+            }
+
+            query = query.OrderByDescending(u => u.UserID);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            if (totalPages == 0) totalPages = 1;
+            if (page > totalPages) page = totalPages;
+
+            var users = await query.AsNoTracking()
+                                   .Skip((page - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToListAsync();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Search = search;
+            ViewBag.Role = role;
             return View(users);
         }
 
