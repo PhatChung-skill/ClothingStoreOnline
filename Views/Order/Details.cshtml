@@ -44,8 +44,8 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white fw-bold">THÔNG TIN GIAO HÀNG</div>
                 <div class="card-body">
-                    <p><strong>Người nhận:</strong> @(string.IsNullOrEmpty(Model.User?.FullName) ? Model.User?.Username : Model.User?.FullName)</p>
-                    <p><strong>SĐT liên hệ:</strong> @(string.IsNullOrEmpty(Model.User?.Phone) ? "Chưa cập nhật" : Model.User.Phone)</p>
+                    <p><strong>Người nhận:</strong> @Model.ReceiverName</p>
+                    <p><strong>SĐT liên hệ:</strong> @Model.ReceiverPhone</p>
                     <p><strong>Địa chỉ:</strong> @Model.ShippingAddress</p>
                     <p><strong>Thanh toán:</strong> <span class="badge bg-dark">@Model.PaymentMethod</span></p>
                     

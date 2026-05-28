@@ -6,7 +6,7 @@ using ClothingStoreWeb.Models;
 
 namespace ClothingStoreWeb.Controllers
 {
-    [Authorize(Roles = "Admin")] // Chỉ Admin mới được vào trang này
+    [Authorize(Roles = "Admin,Staff")] 
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -54,6 +54,34 @@ namespace ClothingStoreWeb.Controllers
                 TempData["Success"] = "Đã cập nhật trạng thái đơn hàng thành công!";
             }
             return RedirectToAction(nameof(Details), new { id = orderId });
+        }
+
+        // 4. XÓA ĐƠN HÀNG (CHỈ ÁP DỤNG CHO ĐƠN ĐÃ HOÀN THÀNH HOẶC ĐÃ HỦY)
+        [HttpPost]
+        [Authorize(Roles = "Admin")] // Chỉ Admin mới có quyền xóa đơn hàng
+        public IActionResult Delete(int id)
+        {
+            var order = _context.Orders
+                                .Include(o => o.OrderDetails)
+                                .FirstOrDefault(o => o.OrderID == id);
+
+            if (order == null) return NotFound();
+
+            // Chấp nhận xóa nếu đơn hàng là Completed (Hoàn thành) hoặc Cancelled (Đã hủy)
+            if (order.Status == "Completed" || order.Status == "Cancelled")
+            {
+                _context.OrderDetails.RemoveRange(order.OrderDetails);
+                _context.Orders.Remove(order);
+                
+                _context.SaveChanges();
+                TempData["Success"] = $"Đã xóa vĩnh viễn đơn hàng #{id} khỏi hệ thống!";
+            }
+            else
+            {
+                TempData["Error"] = "Cảnh báo: Bạn chỉ có thể xóa những đơn hàng đã ở trạng thái Hoàn thành hoặc Đã hủy.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

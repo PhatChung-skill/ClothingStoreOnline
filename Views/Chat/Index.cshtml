@@ -1,0 +1,57 @@
+@model IEnumerable<ClothingStoreWeb.Models.ChatMessage>
+@{
+    ViewData["Title"] = "Hỗ trợ khách hàng";
+}
+
+<div class="container mt-4 col-md-8 mx-auto">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white fw-bold d-flex align-items-center">
+            <i class="bi bi-chat-dots-fill fs-4 me-2"></i> Kênh Hỗ Trợ Khách Hàng
+        </div>
+        
+        <div class="card-body bg-light" style="height: 400px; overflow-y: auto;" id="chatBox">
+            @if (!Model.Any())
+            {
+                <div class="text-center text-muted mt-5">
+                    <p>Bạn chưa có tin nhắn nào.</p>
+                    <p>Hãy gửi tin nhắn nếu bạn cần tư vấn hoặc khiếu nại đơn hàng nhé!</p>
+                </div>
+            }
+            @foreach (var msg in Model)
+            {
+                if (msg.IsFromStaff)
+                {
+                    <div class="d-flex justify-content-start mb-3">
+                        <div class="bg-white border text-dark p-2 rounded-3 shadow-sm" style="max-width: 75%;">
+                            <div class="fw-bold text-primary small mb-1">Nhân viên CSKH</div>
+                            <div>@msg.MessageText</div>
+                            <div class="text-muted small mt-1" style="font-size: 10px;">@msg.SentAt.ToString("HH:mm dd/MM")</div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="bg-primary text-white p-2 rounded-3 shadow-sm" style="max-width: 75%;">
+                            <div>@msg.MessageText</div>
+                            <div class="text-light small mt-1 text-end" style="font-size: 10px;">@msg.SentAt.ToString("HH:mm dd/MM")</div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        
+        <div class="card-footer bg-white">
+            <form asp-action="Send" method="post" class="d-flex gap-2">
+                <input type="text" name="messageText" class="form-control" placeholder="Nhập tin nhắn..." required autocomplete="off" />
+                <button type="submit" class="btn btn-primary fw-bold"><i class="bi bi-send"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Tự động cuộn xuống tin nhắn mới nhất -->
+<script>
+    var chatBox = document.getElementById("chatBox");
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>

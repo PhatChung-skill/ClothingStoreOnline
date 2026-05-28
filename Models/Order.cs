@@ -25,6 +25,14 @@ namespace ClothingStoreWeb.Models
         [StringLength(50)]
         public string PaymentMethod { get; set; } = "COD"; // Phương thức: COD hoặc QR_Transfer
 
+        [Required(ErrorMessage = "Tên người nhận không được để trống")]
+        [StringLength(100)]
+        public string ReceiverName { get; set; } = string.Empty; // Lưu cứng tên lúc đặt hàng
+
+        [Required(ErrorMessage = "Số điện thoại không được để trống")]
+        [StringLength(20)]
+        public string ReceiverPhone { get; set; } = string.Empty; // Lưu cứng SĐT lúc đặt hàng
+
         [Required(ErrorMessage = "Địa chỉ nhận hàng không được để trống")]
         [StringLength(255)]
         public string ShippingAddress { get; set; } = string.Empty;

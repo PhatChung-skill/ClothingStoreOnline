@@ -8,7 +8,7 @@ using ClothingStoreWeb.ViewModels;
 
 namespace ClothingStoreWeb.Controllers
 {
-    [Authorize] // Bắt buộc đăng nhập mới sử dụng được Giỏ hàng theo yêu cầu của bạn
+    [Authorize] // Bắt buộc đăng nhập mới sử dụng được Giỏ hàng
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -43,7 +43,6 @@ namespace ClothingStoreWeb.Controllers
                 return RedirectToAction("Details", "Home", new { id = productId });
             }
 
-            // Tìm chính xác biến thể trong kho
             var variant = _context.ProductVariants
                                   .Include(v => v.Product)
                                   .FirstOrDefault(v => v.ProductID == productId && v.Color == selectedColor && v.Size == selectedSize);
@@ -54,7 +53,6 @@ namespace ClothingStoreWeb.Controllers
                 return RedirectToAction("Details", "Home", new { id = productId });
             }
 
-            // Lấy ảnh đại diện sản phẩm
             var mainImage = _context.ProductImages.FirstOrDefault(i => i.ProductID == productId)?.ImageUrl ?? "/images/no-image.png";
 
             var cart = GetCartItems();
@@ -62,7 +60,7 @@ namespace ClothingStoreWeb.Controllers
 
             if (cartItem != null)
             {
-                cartItem.Quantity++; // Nếu trùng khít món đồ thì cộng dồn số lượng
+                cartItem.Quantity++;
             }
             else
             {
@@ -97,24 +95,19 @@ namespace ClothingStoreWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        
-       // 4. TRANG TIẾN HÀNH THANH TOÁN (GET)
+        // 4. TRANG TIẾN HÀNH THANH TOÁN (GET)
         [HttpGet]
         public IActionResult Checkout()
         {
             var cart = GetCartItems();
             if (!cart.Any()) return RedirectToAction(nameof(Index));
 
-            // Lấy tên đăng nhập hiện tại từ Claims
             var username = User.Identity?.Name;
-            
-            // Tìm User trong DB dựa trên cả Username hoặc Email (đề phòng lưu Claim kiểu khác nhau)
             var user = _context.Users.FirstOrDefault(u => u.Username == username || u.Email == username);
 
             var checkoutVm = new CheckoutVM();
             if (user != null)
             {
-                // Ưu tiên lấy FullName, nếu null thì lấy temporary là Username để không bao giờ bị trống
                 checkoutVm.FullName = !string.IsNullOrEmpty(user.FullName) ? user.FullName : user.Username;
                 checkoutVm.Phone = user.Phone ?? string.Empty;
                 checkoutVm.ShippingAddress = user.Address ?? string.Empty;
@@ -141,7 +134,6 @@ namespace ClothingStoreWeb.Controllers
                 {
                     try
                     {
-                        // CẬP NHẬT LẠI THÔNG TIN USER NẾU TRONG DB ĐANG TRỐNG
                         if (user != null)
                         {
                             if (string.IsNullOrEmpty(user.FullName) || user.FullName == user.Username) 
@@ -152,7 +144,7 @@ namespace ClothingStoreWeb.Controllers
                             _context.Users.Update(user);
                         }
 
-                        // A. Tạo đối tượng Order tổng quát
+                        // A. Tạo đối tượng Order tổng quát, lưu kèm Snapshot tên và SĐT
                         var order = new Order
                         {
                             UserID = user?.UserID,
@@ -160,7 +152,9 @@ namespace ClothingStoreWeb.Controllers
                             TotalAmount = cart.Sum(item => item.TotalPrice),
                             Status = "Pending",
                             PaymentMethod = vm.PaymentMethod,
-                            ShippingAddress = vm.ShippingAddress // Địa chỉ giao hàng thực tế của đơn này
+                            ShippingAddress = vm.ShippingAddress,
+                            ReceiverName = vm.FullName,   // Dữ liệu Snapshot
+                            ReceiverPhone = vm.Phone      // Dữ liệu Snapshot
                         };
 
                         _context.Orders.Add(order);
@@ -172,7 +166,6 @@ namespace ClothingStoreWeb.Controllers
                             var variant = _context.ProductVariants.Find(item.VariantID);
                             if (variant == null || variant.StockQuantity < item.Quantity)
                             {
-                                // Bắn lỗi ngay lập tức nếu kho không đủ đáp ứng
                                 throw new Exception($"Sản phẩm '{item.ProductName}' (Màu: {item.Color} / Size: {item.Size}) chỉ còn tồn {variant?.StockQuantity ?? 0} sản phẩm. Vui lòng giảm số lượng.");
                             }
 

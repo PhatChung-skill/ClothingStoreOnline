@@ -1,0 +1,52 @@
+@model IEnumerable<ClothingStoreWeb.Models.ChatMessage>
+@{
+    ViewData["Title"] = "Trả lời Chat";
+    var customer = ViewBag.Customer as ClothingStoreWeb.Models.User;
+}
+
+<div class="container mt-4 col-md-8 mx-auto">
+    <a asp-action="StaffList" class="btn btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Quay lại Hộp thư</a>
+    
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white fw-bold">
+            Hỗ trợ khách hàng: @(string.IsNullOrEmpty(customer?.FullName) ? customer?.Username : customer?.FullName)
+        </div>
+        
+        <div class="card-body bg-light" style="height: 400px; overflow-y: auto;" id="chatBox">
+            @foreach (var msg in Model)
+            {
+                if (!msg.IsFromStaff)
+                {
+                    <div class="d-flex justify-content-start mb-3">
+                        <div class="bg-white border text-dark p-2 rounded-3 shadow-sm" style="max-width: 75%;">
+                            <div>@msg.MessageText</div>
+                            <div class="text-muted small mt-1" style="font-size: 10px;">@msg.SentAt.ToString("HH:mm dd/MM")</div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="bg-success text-white p-2 rounded-3 shadow-sm" style="max-width: 75%;">
+                            <div>@msg.MessageText</div>
+                            <div class="text-light small mt-1 text-end" style="font-size: 10px;">@msg.SentAt.ToString("HH:mm dd/MM")</div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        
+        <div class="card-footer bg-white">
+            <form asp-action="StaffReply" method="post" class="d-flex gap-2">
+                <input type="hidden" name="userId" value="@customer?.UserID" />
+                <input type="text" name="messageText" class="form-control" placeholder="Nhập câu trả lời..." required autocomplete="off" />
+                <button type="submit" class="btn btn-success fw-bold"><i class="bi bi-send"></i> Gửi</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var chatBox = document.getElementById("chatBox");
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>

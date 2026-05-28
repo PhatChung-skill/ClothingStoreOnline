@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ClothingStoreWeb.Controllers
 {
-    [Authorize(Roles = "Staff, Admin")] // Staff hoặc Admin đều vào được
+    // Cấp quyền cho cả Admin và Staff đều có thể vào Workspace này
+    [Authorize(Roles = "Admin,Staff")] 
     public class StaffController : Controller
     {
         public IActionResult Index()
         {
-            return Content("CHÀO MỪNG STAFF ĐẾN VỚI TRANG QUẢN LÝ ĐƠN HÀNG!");
+            return View();
         }
     }
 }
