@@ -17,6 +17,7 @@ namespace ClothingStoreWeb.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<EmailOtp> EmailOtps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,7 +42,8 @@ namespace ClothingStoreWeb.Data
                     FullName = "Hệ Thống Quản Trị",
                     Phone = "0123456789",
                     Address = "TP HCM",
-                    Role = "Admin" 
+                    Role = "Admin",
+                    EmailVerified = true
                 }
             );
         }

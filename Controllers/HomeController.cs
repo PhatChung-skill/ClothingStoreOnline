@@ -26,27 +26,28 @@ public class HomeController : Controller
         const int pageSize = 9; // 9 items per page fits the 3-column responsive grid perfectly
         if (page < 1) page = 1;
 
-        IQueryable<Product> query = _context.Products.Include(p => p.ProductImages).Include(p => p.Category);
+        IQueryable<Product> query = _context.Products.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
             var searchClean = search.Trim().ToLower();
-            query = query.Where(p => p.Name.ToLower().Contains(searchClean) 
+            query = query.Where(p => p.Name.ToLower().Contains(searchClean)
                                   || p.Description.ToLower().Contains(searchClean)
                                   || (p.Category != null && p.Category.Name.ToLower().Contains(searchClean)));
         }
-
-        query = query.OrderByDescending(p => p.ProductID);
 
         var totalItems = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
         if (totalPages == 0) totalPages = 1;
         if (page > totalPages) page = totalPages;
 
-        var products = await query.AsNoTracking()
-                                  .Skip((page - 1) * pageSize)
-                                  .Take(pageSize)
-                                  .ToListAsync();
+        var products = await query
+            .Include(p => p.ProductImages)
+            .Include(p => p.Category)
+            .OrderByDescending(p => p.ProductID)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
 
         var cartItems = HttpContext.Session.GetObjectFromJson<List<CartItem>>(CartSessionKey) ?? new List<CartItem>();
         ViewBag.CartPreview = cartItems.Take(3).ToList();
@@ -63,11 +64,11 @@ public class HomeController : Controller
     {
         // Lấy sản phẩm kèm ảnh và các biến thể tồn kho
         var product = await _context.Products
-                                    .AsNoTracking()
-                                    .Include(p => p.ProductImages)
-                                    .Include(p => p.ProductVariants)
-                                    .Include(p => p.Category)
-                                    .FirstOrDefaultAsync(p => p.ProductID == id);
+            .AsNoTracking()
+            .Include(p => p.ProductImages)
+            .Include(p => p.ProductVariants)
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.ProductID == id);
 
         if (product == null) return NotFound();
 
@@ -84,6 +85,14 @@ public class HomeController : Controller
 
     public IActionResult Privacy()
     {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult NotFoundPage(int statusCode = 404)
+    {
+        Response.StatusCode = statusCode is 404 or 0 ? 404 : statusCode;
+        ViewBag.StatusCode = Response.StatusCode;
         return View();
     }
 

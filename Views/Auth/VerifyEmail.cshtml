@@ -1,0 +1,47 @@
+@model ClothingStoreWeb.ViewModels.VerifyEmailVM
+@{
+    ViewData["Title"] = "Xác thực Email";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="brand-form-card p-4 p-md-5">
+            <h3 class="text-center fw-bold brand-title mb-2">XÁC THỰC EMAIL</h3>
+            <p class="text-center text-muted mb-4">Nhập mã OTP 6 số đã gửi về email (hoặc mã demo nếu đang test)</p>
+
+            <partial name="_OtpAlerts" />
+
+            <form asp-action="VerifyEmail" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label class="brand-form-label mb-2">Email</label>
+                    <input asp-for="Email" class="form-control brand-input" readonly />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="brand-form-label mb-2">Mã OTP (6 số)</label>
+                    <input asp-for="OtpCode" class="form-control brand-input otp-input text-center fw-bold fs-4"
+                           maxlength="6" inputmode="numeric" pattern="\d{6}" placeholder="000000" autocomplete="one-time-code" />
+                    <span asp-validation-for="OtpCode" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-brand w-100 py-2 mb-3">Xác thực</button>
+            </form>
+
+            <form asp-action="ResendRegisterOtp" method="post" class="text-center">
+                <input type="hidden" name="email" value="@Model.Email" />
+                <button type="submit" class="btn btn-link brand-link p-0">Gửi lại mã OTP</button>
+            </form>
+
+            <div class="mt-3 text-center">
+                <a class="brand-link" asp-action="Login">Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

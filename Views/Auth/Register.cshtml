@@ -21,12 +21,22 @@
             </div>
             <div class="mb-3">
                 <label class="brand-form-label mb-2">Mật khẩu</label>
-                <input asp-for="Password" class="form-control brand-input" />
+                <div class="password-input-group">
+                    <input asp-for="Password" class="form-control brand-input" type="password" />
+                    <button type="button" class="password-toggle-btn" aria-label="Hiện mật khẩu">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label class="brand-form-label mb-2">Xác nhận mật khẩu</label>
-                <input asp-for="ConfirmPassword" class="form-control brand-input" />
+                <div class="password-input-group">
+                    <input asp-for="ConfirmPassword" class="form-control brand-input" type="password" />
+                    <button type="button" class="password-toggle-btn" aria-label="Hiện mật khẩu">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-brand w-100 py-2">Đăng ký</button>
@@ -39,3 +49,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

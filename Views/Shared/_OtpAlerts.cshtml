@@ -1,0 +1,23 @@
+@if (TempData["Info"] != null)
+{
+    <div class="alert alert-info">@TempData["Info"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="alert alert-warning small mb-3">
+    <i class="bi bi-envelope-exclamation"></i>
+    <strong>Lưu ý:</strong> Email OTP có thể nằm trong <strong>Hộp thư spam / Quảng cáo</strong>. Vui lòng kiểm tra cả hai nơi.
+</div>
+
+@if (TempData["DevOtp"] != null)
+{
+    <div class="alert alert-secondary border border-danger">
+        <strong><i class="bi bi-bug"></i> Chế độ demo (SMTP chưa gửi được):</strong>
+        <p class="mb-1 mt-2">Mã OTP của bạn là:</p>
+        <p class="fs-3 fw-bold text-danger text-center mb-1 letter-spacing-otp">@TempData["DevOtp"]</p>
+        <p class="small text-muted mb-0">Cấu hình SMTP trong <code>appsettings.Development.json</code> để nhận mã qua email thật.</p>
+    </div>
+}

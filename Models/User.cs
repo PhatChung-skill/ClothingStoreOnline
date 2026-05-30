@@ -35,6 +35,9 @@ namespace ClothingStoreWeb.Models
         // Trạng thái khóa tài khoản: false là bình thường, true là bị khóa
         public bool IsLocked { get; set; } = false;
 
+        // Xác thực email qua OTP khi đăng ký
+        public bool EmailVerified { get; set; } = false;
+
         // Quan hệ 1 - Nhiều: Một người dùng có thể có nhiều Đơn hàng
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }

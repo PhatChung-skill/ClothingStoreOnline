@@ -263,4 +263,56 @@ body {
   padding: 20px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 0.85rem;
+}
+
+.password-input-group {
+  position: relative;
+}
+
+.password-input-group input {
+  padding-right: 2.75rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--brand-red);
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.password-toggle-btn:hover {
+  color: var(--brand-red-dark);
+}
+
+.otp-input {
+  letter-spacing: 0.5rem;
+}
+
+.letter-spacing-otp {
+  letter-spacing: 0.4rem;
+}
+
+.not-found-wrap {
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found-card {
+  max-width: 520px;
+  width: 100%;
+}
+
+.not-found-code {
+  font-size: clamp(4rem, 12vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.08em;
 }

@@ -22,7 +22,8 @@ namespace ClothingStoreWeb.Controllers
             const int pageSize = 10;
             if (page < 1) page = 1;
 
-            IQueryable<User> query = _context.Users;
+            // Chỉ hiển thị tài khoản đã xác thực email (đã hoàn tất đăng ký)
+            IQueryable<User> query = _context.Users.Where(u => u.EmailVerified);
 
             if (!string.IsNullOrWhiteSpace(search))
             {

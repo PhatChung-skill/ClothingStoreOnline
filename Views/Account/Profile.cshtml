@@ -1,0 +1,55 @@
+@model ClothingStoreWeb.Models.User
+@{
+    ViewData["Title"] = "Tài khoản của tôi";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="brand-form-card p-4 p-md-5">
+            <h3 class="text-center fw-bold brand-title mb-4"><i class="bi bi-person-circle"></i> TÀI KHOẢN CỦA TÔI</h3>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            <div class="mb-3">
+                <label class="brand-form-label">Tên đăng nhập</label>
+                <p class="form-control brand-input bg-light">@Model.Username</p>
+            </div>
+            <div class="mb-3">
+                <label class="brand-form-label">Email</label>
+                <p class="form-control brand-input bg-light">
+                    @Model.Email
+                    @if (Model.EmailVerified)
+                    {
+                        <span class="badge bg-success ms-2">Đã xác thực</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark ms-2">Chưa xác thực</span>
+                    }
+                </p>
+            </div>
+            <div class="mb-3">
+                <label class="brand-form-label">Họ và tên</label>
+                <p class="form-control brand-input bg-light">@(Model.FullName ?? "Chưa cập nhật")</p>
+            </div>
+            <div class="mb-3">
+                <label class="brand-form-label">Số điện thoại</label>
+                <p class="form-control brand-input bg-light">@(Model.Phone ?? "Chưa cập nhật")</p>
+            </div>
+            <div class="mb-4">
+                <label class="brand-form-label">Địa chỉ</label>
+                <p class="form-control brand-input bg-light">@(Model.Address ?? "Chưa cập nhật")</p>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a asp-action="ChangePassword" class="btn btn-brand py-2">
+                    <i class="bi bi-shield-lock"></i> Đổi mật khẩu
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-brand py-2">Về trang chủ</a>
+            </div>
+        </div>
+    </div>
+</div>
